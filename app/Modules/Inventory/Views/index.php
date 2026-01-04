@@ -15,7 +15,7 @@
             </div>
 
             <div class="my-4 text-end">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#barangModal">
+                <button type="button" class="btn btn-primary btn-tambah" data-bs-toggle="modal" data-bs-target="#barangModal">
                     Tambah Barang
                 </button>
             </div>
@@ -49,7 +49,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="nama_barang" class="form-label">Nama Barang<sup class="text-danger fw-bold">*</sup></label>
-                        <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan nama barang" autofocus />
+                        <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan nama barang" autofocus required />
                     </div>
                     <div class="mb-3">
                         <label for="deskripsi" class="form-label">Deskripsi</label>
@@ -57,15 +57,15 @@
                     </div>
                     <div class="mb-3">
                         <label for="stok" class="form-label">Stok<sup class="text-danger fw-bold">*</sup></label>
-                        <input type="text" class="form-control" id="stok" name="stok" placeholder="Masukkan stok barang" />
+                        <input type="text" class="form-control" id="stok" name="stok" placeholder="Masukkan stok barang" required />
                     </div>
                     <div class="mb-3">
                         <label for="harga" class="form-label">Harga<sup class="text-danger fw-bold">*</sup></label>
-                        <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukkan harga barang" />
+                        <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukkan harga barang" required />
                     </div>
                     <div class="mb-3">
                         <label for="gambar" class="form-label">Gambar<sup class="text-danger fw-bold">*</sup></label>
-                        <input type="text" class="form-control" id="gambar" name="gambar" placeholder="Masukkan gambar barang" />
+                        <input type="text" class="form-control" id="gambar" name="gambar" placeholder="Masukkan gambar barang" required />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -87,6 +87,11 @@
     var baseUrl = window.location.href;
 
     $(document).ready(function() {
+        $('.btn-tambah').on('click', function() {
+            resetForm();
+        });
+
+        submitData();
         showData();
     });
 
@@ -119,6 +124,33 @@
 
                 $('#table_barang tbody').html(tbody);
             }
+        });
+    }
+
+    function resetForm() {
+        $('#formBarang')[0].reset();
+    }
+
+    function submitData() {
+        $('#formBarang').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: baseUrl + '/create',
+                method: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status) {
+                        $('#barangModal').modal('hide');
+                        resetForm();
+                        showData();
+                        alert(response.message);
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
         });
     }
 </script>

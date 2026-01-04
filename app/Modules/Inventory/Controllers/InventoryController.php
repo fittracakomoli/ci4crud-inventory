@@ -31,4 +31,29 @@ class InventoryController extends BaseController
 
         return $this->response->setJSON(['status' => true, 'data' => $barang]);
     }
+
+    public function create_ajax()
+    {
+        $data = $this->request->getPost();
+
+        if (!isset($data['nama_barang']) || !isset($data['stok']) || !isset($data['harga'])) {
+            return $this->response->setJSON(['status' => false, 'message' => 'Data tidak lengkap.']);
+        }
+
+        $barang = [
+            'nama_barang' => $data['nama_barang'],
+            'deskripsi'   => $data['deskripsi'],
+            'stok'        => $data['stok'],
+            'harga'       => $data['harga'],
+            'gambar'      => $data['gambar'],
+        ];
+
+        $insert = $this->inventoryModel->insert($barang);
+
+        if ($insert === false) {
+            return $this->response->setJSON(['status' => false, 'message' => 'Gagal menambahkan data barang.']);
+        }
+
+        return $this->response->setJSON(['status' => true, 'message' => 'Berhasil menambahkan data barang.', 'data' => $barang]);
+    }
 }
