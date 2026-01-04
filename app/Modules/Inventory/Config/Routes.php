@@ -9,4 +9,6 @@ $routes->group('inventory', ['namespace' => 'Modules\Inventory\Controllers'], fu
     $subroutes->add('list', 'InventoryController::list_ajax');
     $subroutes->add('create', 'InventoryController::create_ajax');
     $subroutes->add('delete', 'InventoryController::delete_ajax');
+    $subroutes->add('detail', 'InventoryController::detail_ajax');
+    $subroutes->add('update', 'InventoryController::update_ajax');
 });

@@ -73,4 +73,44 @@ class InventoryController extends BaseController
 
         return $this->response->setJSON(['status' => true, 'message' => 'Berhasil menghapus data barang.']);
     }
+
+    public function detail_ajax()
+    {
+        $data = $this->request->getGet();
+
+        if (!isset($data['id'])) {
+            return $this->response->setJSON(['status' => false, 'message' => 'ID barang tidak ditemukan.']);
+        }
+
+        $barang = $this->inventoryModel->find($data['id']);
+        if (empty($barang)) {
+            return $this->response->setJSON(['status' => false, 'message' => 'Data barang tidak ditemukan.']);
+        }
+
+        return $this->response->setJSON(['status' => true, 'data' => $barang]);
+    }
+
+    public function update_ajax()
+    {
+        $data = $this->request->getPost();
+        if (!isset($data['id'])) {
+            return $this->response->setJSON(['status' => false, 'message' => 'ID barang tidak ditemukan.']);
+        }
+
+        $barang = [
+            'nama_barang' => $data['nama_barang'],
+            'deskripsi'   => $data['deskripsi'],
+            'stok'        => $data['stok'],
+            'harga'       => $data['harga'],
+            'gambar'      => $data['gambar'],
+        ];
+
+        $update = $this->inventoryModel->update($data['id'], $barang);
+
+        if ($update === false) {
+            return $this->response->setJSON(['status' => false, 'message' => 'Gagal memperbarui data barang.', 'data' => $barang]);
+        }
+
+        return $this->response->setJSON(['status' => true, 'message' => 'Berhasil memperbarui data barang.', 'data' => $barang]);
+    }
 }

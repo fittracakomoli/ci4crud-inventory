@@ -47,6 +47,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="id" id="id" value="" />
                     <div class="mb-3">
                         <label for="nama_barang" class="form-label">Nama Barang<sup class="text-danger fw-bold">*</sup></label>
                         <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan nama barang" autofocus required />
@@ -88,7 +89,60 @@
 
     $(document).ready(function() {
         $('.btn-tambah').on('click', function() {
+            $('#id').val('');
             resetForm();
+        });
+
+        $(document).on('click', '.btn-edit', function() {
+            let id = $(this).data('id');
+
+            $.ajax({
+                url: baseUrl + '/detail?id=' + id,
+                method: 'GET',
+                success: function(response) {
+                    if (response.status) {
+                        let barang = response.data;
+                        $('#formBarang')[0].reset();
+                        $('#id').val(barang.id);
+                        $('#nama_barang').val(barang.nama_barang);
+                        $('#deskripsi').val(barang.deskripsi);
+                        $('#stok').val(barang.stok);
+                        $('#harga').val(barang.harga);
+                        $('#gambar').val(barang.gambar);
+                        $('#barangModalLabel').text('Form Edit Barang');
+                        $('.modal-footer').show();
+                        $('#barangModal').modal('show');
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-detail', function() {
+            let id = $(this).data('id');
+
+            $.ajax({
+                url: baseUrl + '/detail?id=' + id,
+                method: 'GET',
+                success: function(response) {
+                    if (response.status) {
+                        let barang = response.data;
+                        $('#formBarang')[0].reset();
+                        $('#id').val(barang.id);
+                        $('#nama_barang').val(barang.nama_barang);
+                        $('#deskripsi').val(barang.deskripsi);
+                        $('#stok').val(barang.stok);
+                        $('#harga').val(barang.harga);
+                        $('#gambar').val(barang.gambar);
+                        $('#barangModalLabel').text('Detail Barang');
+                        $('.modal-footer').hide();
+                        $('#barangModal').modal('show');
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
         });
 
         submitData();
@@ -136,8 +190,16 @@
         $('#formBarang').on('submit', function(e) {
             e.preventDefault();
 
+            if ($('#id').val()) {
+                // Update
+                var url = baseUrl + '/update';
+            } else {
+                // Create
+                var url = baseUrl + '/create';
+            }
+
             $.ajax({
-                url: baseUrl + '/create',
+                url: url,
                 method: 'POST',
                 data: $(this).serialize(),
                 dataType: 'json',
