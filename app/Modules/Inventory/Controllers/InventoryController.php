@@ -56,4 +56,21 @@ class InventoryController extends BaseController
 
         return $this->response->setJSON(['status' => true, 'message' => 'Berhasil menambahkan data barang.', 'data' => $barang]);
     }
+
+    public function delete_ajax()
+    {
+        $data = $this->request->getPost();
+
+        if (!isset($data['id'])) {
+            return $this->response->setJSON(['status' => false, 'message' => 'ID barang tidak ditemukan.']);
+        }
+
+        $delete = $this->inventoryModel->delete($data['id']);
+
+        if ($delete === false) {
+            return $this->response->setJSON(['status' => false, 'message' => 'Gagal menghapus data barang.']);
+        }
+
+        return $this->response->setJSON(['status' => true, 'message' => 'Berhasil menghapus data barang.']);
+    }
 }

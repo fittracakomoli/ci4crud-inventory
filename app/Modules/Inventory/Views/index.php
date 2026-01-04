@@ -92,6 +92,7 @@
         });
 
         submitData();
+        deleteData();
         showData();
     });
 
@@ -152,6 +153,30 @@
                 }
             });
         });
+    }
+
+    function deleteData() {
+        $(document).on('click', '.btn-delete', function() {
+            let id = $(this).data('id');
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                $.ajax({
+                    url: baseUrl + '/delete',
+                    method: 'POST',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status) {
+                            showData();
+                            alert(response.message);
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        })
     }
 </script>
 
