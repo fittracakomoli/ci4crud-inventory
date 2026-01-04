@@ -1,5 +1,9 @@
 <?php
 
+$routes = \Config\Services::routes();
+
+$routes->get('/', 'Home::index');
+
 /*
 * --------------------------------------------------------------------
 * HMVC ROUTE LOADER (Versi Inside App)
