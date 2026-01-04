@@ -35,9 +35,18 @@ class InventoryController extends BaseController
     public function create_ajax()
     {
         $data = $this->request->getPost();
+        $fileGambar = $this->request->getFile('gambar');
 
         if (!isset($data['nama_barang']) || !isset($data['stok']) || !isset($data['harga'])) {
             return $this->response->setJSON(['status' => false, 'message' => 'Data tidak lengkap.']);
+        }
+
+        if ($fileGambar && $fileGambar->isValid() && !$fileGambar->hasMoved()) {
+            $namaGambar = $fileGambar->getRandomName();
+            $fileGambar->move(FCPATH . 'uploads', $namaGambar);
+            $data['gambar'] = $namaGambar;
+        } else {
+            $data['gambar'] = null;
         }
 
         $barang = [
@@ -45,7 +54,7 @@ class InventoryController extends BaseController
             'deskripsi'   => $data['deskripsi'],
             'stok'        => $data['stok'],
             'harga'       => $data['harga'],
-            'gambar'      => $data['gambar'],
+            'gambar'      => $namaGambar,
         ];
 
         $insert = $this->inventoryModel->insert($barang);
@@ -63,6 +72,14 @@ class InventoryController extends BaseController
 
         if (!isset($data['id'])) {
             return $this->response->setJSON(['status' => false, 'message' => 'ID barang tidak ditemukan.']);
+        }
+
+        $barang = $this->inventoryModel->find($data['id']);
+        if ($barang['gambar']) {
+            $filePath = FCPATH . 'uploads/' . $barang['gambar'];
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
         }
 
         $delete = $this->inventoryModel->delete($data['id']);
@@ -93,8 +110,22 @@ class InventoryController extends BaseController
     public function update_ajax()
     {
         $data = $this->request->getPost();
+        $fileGambar = $this->request->getFile('gambar');
+        $barangLama = $this->inventoryModel->find($data['id']);
+
         if (!isset($data['id'])) {
             return $this->response->setJSON(['status' => false, 'message' => 'ID barang tidak ditemukan.']);
+        }
+
+        if ($fileGambar && $fileGambar->isValid() && !$fileGambar->hasMoved()) {
+            if ($barangLama['gambar'] && file_exists(FCPATH . 'uploads/' . $barangLama['gambar'])) {
+                unlink(FCPATH . 'uploads/' . $barangLama['gambar']);
+            }
+
+            $namaGambar = $fileGambar->getRandomName();
+            $fileGambar->move(FCPATH . 'uploads', $namaGambar);
+        } else {
+            $namaGambar = $barangLama['gambar'];
         }
 
         $barang = [
@@ -102,7 +133,7 @@ class InventoryController extends BaseController
             'deskripsi'   => $data['deskripsi'],
             'stok'        => $data['stok'],
             'harga'       => $data['harga'],
-            'gambar'      => $data['gambar'],
+            'gambar'      => $namaGambar,
         ];
 
         $update = $this->inventoryModel->update($data['id'], $barang);

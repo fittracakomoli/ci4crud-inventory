@@ -5,29 +5,26 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12 mt-4">
-            <div>
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h3>Inventory Management</h3>
-                </div>
-                <div>
                     <p>Manage your inventory items here.</p>
                 </div>
+                <div class="mb-4 text-end">
+                    <button type="button" class="btn btn-primary btn-tambah" data-bs-toggle="modal" data-bs-target="#barangModal">
+                        Tambah Barang
+                    </button>
+                </div>
             </div>
 
-            <div class="my-4 text-end">
-                <button type="button" class="btn btn-primary btn-tambah" data-bs-toggle="modal" data-bs-target="#barangModal">
-                    Tambah Barang
-                </button>
-            </div>
-
-            <table class="table table-hover table-striped" id="table_barang">
+            <table class="table table-hover" id="table_barang">
                 <thead>
                     <tr>
                         <th scope="col">No.</th>
                         <th scope="col">Gambar</th>
                         <th scope="col">Nama Barang</th>
                         <th scope="col">Stok</th>
-                        <th scope="col">Aksi</th>
+                        <th scope="col" class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -38,7 +35,7 @@
 
 <!-- Create Modal -->
 
-<form id="formBarang">
+<form id="formBarang" enctype="multipart/form-data">
     <div class="modal fade" id="barangModal" tabindex="-1" aria-labelledby="barangModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -65,8 +62,11 @@
                         <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukkan harga barang" required />
                     </div>
                     <div class="mb-3">
-                        <label for="gambar" class="form-label">Gambar<sup class="text-danger fw-bold">*</sup></label>
-                        <input type="text" class="form-control" id="gambar" name="gambar" placeholder="Masukkan gambar barang" required />
+                        <label for="gambar" class="form-label">Gambar</label>
+                        <input type="file" class="form-control" id="gambar" name="gambar" placeholder="Masukkan gambar barang" />
+                        <div class="w-full mb-3">
+                            <img src="img/default.png" class="img-thumbnail my-2 img-preview" alt="">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -89,8 +89,24 @@
 
     $(document).ready(function() {
         $('.btn-tambah').on('click', function() {
+            $('#barangModalLabel').text('Form Tambah Barang');
+            $('.modal-footer').show();
+            $('#gambar').show();
             $('#id').val('');
+            $('.img-preview').attr('src', '');
             resetForm();
+        });
+
+        $(document).on('change', '#gambar', function() {
+            const gambar = document.querySelector('#gambar');
+            const imgPreview = document.querySelector('.img-preview');
+
+            const fileGambar = new FileReader();
+            fileGambar.readAsDataURL(gambar.files[0]);
+
+            fileGambar.onload = function(e) {
+                imgPreview.src = e.target.result;
+            }
         });
 
         $(document).on('click', '.btn-edit', function() {
@@ -108,7 +124,9 @@
                         $('#deskripsi').val(barang.deskripsi);
                         $('#stok').val(barang.stok);
                         $('#harga').val(barang.harga);
-                        $('#gambar').val(barang.gambar);
+                        // $('#gambar').val(barang.gambar);
+                        $('#gambar').show();
+                        $('.img-preview').attr('src', 'uploads/' + barang.gambar);
                         $('#barangModalLabel').text('Form Edit Barang');
                         $('.modal-footer').show();
                         $('#barangModal').modal('show');
@@ -134,7 +152,9 @@
                         $('#deskripsi').val(barang.deskripsi);
                         $('#stok').val(barang.stok);
                         $('#harga').val(barang.harga);
-                        $('#gambar').val(barang.gambar);
+                        // $('#gambar').val(barang.gambar);
+                        $('#gambar').hide();
+                        $('.img-preview').attr('src', 'uploads/' + barang.gambar);
                         $('#barangModalLabel').text('Detail Barang');
                         $('.modal-footer').hide();
                         $('#barangModal').modal('show');
@@ -162,10 +182,10 @@
                         tbody += `
                             <tr>;
                                 <th scope="row">${index + 1}</th>;
-                                <td><img src="${item.gambar}" alt="${item.nama_barang}" width="50" /></td>;
+                                <td><img src="uploads/${item.gambar}" alt="${item.nama_barang}" width="200" /></td>;
                                 <td>${item.nama_barang}</td>;
                                 <td>${item.stok}</td>;
-                                <td>
+                                <td class="text-center">
                                     <button class="btn btn-sm btn-info btn-detail" data-id="${item.id}">Detail</button>
                                     <button class="btn btn-sm btn-warning btn-edit" data-id="${item.id}">Edit</button>
                                     <button class="btn btn-sm btn-danger btn-delete" data-id="${item.id}">Hapus</button>
@@ -191,17 +211,19 @@
             e.preventDefault();
 
             if ($('#id').val()) {
-                // Update
                 var url = baseUrl + '/update';
             } else {
-                // Create
                 var url = baseUrl + '/create';
             }
+
+            let formData = new FormData(this);
 
             $.ajax({
                 url: url,
                 method: 'POST',
-                data: $(this).serialize(),
+                data: formData,
+                processData: false,
+                contentType: false,
                 dataType: 'json',
                 success: function(response) {
                     if (response.status) {
