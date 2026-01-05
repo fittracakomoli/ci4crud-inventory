@@ -78,10 +78,6 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="stok" class="form-label">Stok<sup class="text-danger fw-bold">*</sup></label>
-                        <input type="text" class="form-control" id="stok" name="stok" placeholder="Masukkan stok barang" required />
-                    </div>
-                    <div class="mb-3">
                         <label for="harga" class="form-label">Harga<sup class="text-danger fw-bold">*</sup></label>
                         <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukkan harga barang" required />
                     </div>
@@ -118,6 +114,7 @@
             $('#gambar').show();
             $('#id').val('');
             $('.img-preview').attr('src', '');
+            activateFields();
             resetForm();
         });
 
@@ -147,7 +144,6 @@
                         $('#nama_barang').val(barang.nama_barang).attr('disabled', false);
                         $('#deskripsi').val(barang.deskripsi).attr('disabled', false);
                         $('#kategori').val(barang.id_kategori).attr('disabled', false);
-                        $('#stok').val(barang.stok).attr('disabled', false);
                         $('#harga').val(barang.harga).attr('disabled', false);
                         // $('#gambar').val(barang.gambar);
                         $('#gambar').show();
@@ -176,7 +172,6 @@
                         $('#nama_barang').val(barang.nama_barang).attr('disabled', true);
                         $('#deskripsi').val(barang.deskripsi).attr('disabled', true);
                         $('#kategori').val(barang.id_kategori).attr('disabled', true);
-                        $('#stok').val(barang.stok).attr('disabled', true);
                         $('#harga').val(barang.harga).attr('disabled', true);
                         // $('#gambar').val(barang.gambar);
                         $('#gambar').hide();
@@ -195,6 +190,13 @@
         deleteData();
         showData();
     });
+
+    function activateFields() {
+        $('#nama_barang').attr('disabled', false);
+        $('#deskripsi').attr('disabled', false);
+        $('#kategori').attr('disabled', false);
+        $('#harga').attr('disabled', false);
+    }
 
     function showData(viewType = 'list') {
         $.ajax({

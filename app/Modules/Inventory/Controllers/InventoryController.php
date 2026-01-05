@@ -38,7 +38,7 @@ class InventoryController extends BaseController
         $data = $this->request->getPost();
         $fileGambar = $this->request->getFile('gambar');
 
-        if (!isset($data['nama_barang']) || !isset($data['stok']) || !isset($data['harga'])) {
+        if (!isset($data['nama_barang']) ||  !isset($data['harga'])) {
             return $this->response->setJSON(['status' => false, 'message' => 'Data tidak lengkap.']);
         }
 
@@ -54,7 +54,6 @@ class InventoryController extends BaseController
             'id_kategori' => $data['kategori'],
             'nama_barang' => $data['nama_barang'],
             'deskripsi'   => $data['deskripsi'],
-            'stok'        => $data['stok'],
             'harga'       => $data['harga'],
             'gambar'      => $namaGambar,
         ];
@@ -134,7 +133,6 @@ class InventoryController extends BaseController
             'id_kategori' => $data['kategori'],
             'nama_barang' => $data['nama_barang'],
             'deskripsi'   => $data['deskripsi'],
-            'stok'        => $data['stok'],
             'harga'       => $data['harga'],
             'gambar'      => $namaGambar,
         ];

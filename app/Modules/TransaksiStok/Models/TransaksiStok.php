@@ -22,6 +22,8 @@ class TransaksiStok extends Model
 
     public function simpanTransaksi($data)
     {
+        $this->db->transStart();
+
         $this->insert($data);
 
         $inventoryModel = new \Modules\Inventory\Models\Inventory();
@@ -35,6 +37,8 @@ class TransaksiStok extends Model
 
         $inventoryModel->update($data['id_barang'], ['stok' => $barang['stok']]);
 
-        return true;
+        $this->db->transComplete();
+
+        return $this->db->transStatus();
     }
 }
