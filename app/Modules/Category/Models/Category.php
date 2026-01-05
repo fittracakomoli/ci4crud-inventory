@@ -8,7 +8,7 @@ class Category extends Model
 {
     protected $table = 'kategori';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['name', 'description'];
+    protected $allowedFields = ['nama', 'keterangan'];
 
     protected $useTimestamps = true;
 }
