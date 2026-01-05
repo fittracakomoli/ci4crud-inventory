@@ -13,6 +13,9 @@
                     <a class="nav-link <?php if (uri_string() == 'inventory') echo 'active'; ?>" href="/inventory">Inventory</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?php if (uri_string() == 'category') echo 'active'; ?>" href="/category">Category</a>
+                </li>
+                <li class="nav-item">
             </ul>
         </div>
     </div>

@@ -24,7 +24,7 @@ class InventoryController extends BaseController
 
     public function list_ajax()
     {
-        $barang = $this->inventoryModel->findAll();
+        $barang = $this->inventoryModel->withCategory();
         if (empty($barang)) {
             return $this->response->setJSON(['status' => false, 'message' => 'Tidak ada data barang.', 'data' => []]);
         }

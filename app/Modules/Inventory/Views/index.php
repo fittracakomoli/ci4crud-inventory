@@ -23,6 +23,7 @@
                         <th scope="col">No.</th>
                         <th scope="col">Gambar</th>
                         <th scope="col">Nama Barang</th>
+                        <th scope="col">Kategori</th>
                         <th scope="col">Stok</th>
                         <th scope="col" class="text-center">Aksi</th>
                     </tr>
@@ -184,6 +185,7 @@
                                 <th scope="row">${index + 1}</th>;
                                 <td><img src="uploads/${item.gambar}" alt="${item.nama_barang}" width="200" /></td>;
                                 <td>${item.nama_barang}</td>;
+                                <td>${item.kategori}</td>;
                                 <td>${item.stok}</td>;
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-info btn-detail" data-id="${item.id}">Detail</button>
