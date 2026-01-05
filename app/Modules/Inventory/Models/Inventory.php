@@ -8,7 +8,7 @@ class Inventory extends Model
 {
     protected $table = 'barang';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nama_barang', 'deskripsi', 'stok', 'harga', 'gambar'];
+    protected $allowedFields = ['id_kategori', 'nama_barang', 'deskripsi', 'stok', 'harga', 'gambar'];
 
     protected $useTimestamps = true;
 

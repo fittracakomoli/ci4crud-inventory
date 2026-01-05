@@ -55,6 +55,15 @@
                         <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
+                        <label for="kategori" class="form-label">Kategori<sup class="text-danger fw-bold">*</sup></label>
+                        <select class="form-select" id="kategori" name="kategori" required>
+                            <option value="" selected disabled>Pilih Kategori</option>
+                            <?php foreach ($categories as $category) : ?>
+                                <option value="<?= $category['id']; ?>"><?= $category['nama']; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="stok" class="form-label">Stok<sup class="text-danger fw-bold">*</sup></label>
                         <input type="text" class="form-control" id="stok" name="stok" placeholder="Masukkan stok barang" required />
                     </div>
@@ -121,10 +130,11 @@
                         let barang = response.data;
                         $('#formBarang')[0].reset();
                         $('#id').val(barang.id);
-                        $('#nama_barang').val(barang.nama_barang);
-                        $('#deskripsi').val(barang.deskripsi);
-                        $('#stok').val(barang.stok);
-                        $('#harga').val(barang.harga);
+                        $('#nama_barang').val(barang.nama_barang).attr('disabled', false);
+                        $('#deskripsi').val(barang.deskripsi).attr('disabled', false);
+                        $('#kategori').val(barang.id_kategori).attr('disabled', false);
+                        $('#stok').val(barang.stok).attr('disabled', false);
+                        $('#harga').val(barang.harga).attr('disabled', false);
                         // $('#gambar').val(barang.gambar);
                         $('#gambar').show();
                         $('.img-preview').attr('src', 'uploads/' + barang.gambar);
@@ -149,10 +159,11 @@
                         let barang = response.data;
                         $('#formBarang')[0].reset();
                         $('#id').val(barang.id);
-                        $('#nama_barang').val(barang.nama_barang);
-                        $('#deskripsi').val(barang.deskripsi);
-                        $('#stok').val(barang.stok);
-                        $('#harga').val(barang.harga);
+                        $('#nama_barang').val(barang.nama_barang).attr('disabled', true);
+                        $('#deskripsi').val(barang.deskripsi).attr('disabled', true);
+                        $('#kategori').val(barang.id_kategori).attr('disabled', true);
+                        $('#stok').val(barang.stok).attr('disabled', true);
+                        $('#harga').val(barang.harga).attr('disabled', true);
                         // $('#gambar').val(barang.gambar);
                         $('#gambar').hide();
                         $('.img-preview').attr('src', 'uploads/' + barang.gambar);

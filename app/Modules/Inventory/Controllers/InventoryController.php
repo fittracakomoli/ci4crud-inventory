@@ -16,7 +16,8 @@ class InventoryController extends BaseController
     public function index()
     {
         $data = [
-            'title' => 'Inventory Management'
+            'title' => 'Inventory Management',
+            'categories' => (new \Modules\Category\Models\Category())->findAll(),
         ];
 
         return view('Modules\Inventory\Views\index', $data);
@@ -50,6 +51,7 @@ class InventoryController extends BaseController
         }
 
         $barang = [
+            'id_kategori' => $data['kategori'],
             'nama_barang' => $data['nama_barang'],
             'deskripsi'   => $data['deskripsi'],
             'stok'        => $data['stok'],
@@ -129,6 +131,7 @@ class InventoryController extends BaseController
         }
 
         $barang = [
+            'id_kategori' => $data['kategori'],
             'nama_barang' => $data['nama_barang'],
             'deskripsi'   => $data['deskripsi'],
             'stok'        => $data['stok'],
