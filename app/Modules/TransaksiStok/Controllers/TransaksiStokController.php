@@ -24,7 +24,7 @@ class TransaksiStokController extends BaseController
             'barangs' => $this->inventoryModel->findAll(),
         ];
 
-        return view('Modules\TransaksiStok\Views\index', $data);
+        return view('Modules\TransaksiStok\Views\Transaction', $data);
     }
 
     public function list_ajax()

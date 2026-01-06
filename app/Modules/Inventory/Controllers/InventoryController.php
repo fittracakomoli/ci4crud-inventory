@@ -20,7 +20,7 @@ class InventoryController extends BaseController
             'categories' => (new \Modules\Category\Models\Category())->findAll(),
         ];
 
-        return view('Modules\Inventory\Views\index', $data);
+        return view('Modules\Inventory\Views\Inventory', $data);
     }
 
     public function list_ajax()

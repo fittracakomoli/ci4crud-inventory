@@ -19,7 +19,7 @@ class CategoryController extends BaseController
             'title' => 'Category Management'
         ];
 
-        return view('Modules\Category\Views\index', $data);
+        return view('Modules\Category\Views\Category', $data);
     }
 
     public function list_ajax()
