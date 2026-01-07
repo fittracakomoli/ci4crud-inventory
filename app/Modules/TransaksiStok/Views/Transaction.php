@@ -20,8 +20,10 @@
             <table class="table table-hover" id="table_transaksi">
                 <thead>
                     <tr>
+                        <th scope="col">Invoice ID</th>
                         <th scope="col">Nama Barang</th>
                         <th scope="col">Jenis</th>
+                        <th scope="col">Dari/Ke</th>
                         <th scope="col">Jumlah</th>
                         <th scope="col">Keterangan</th>
                         <th scope="col">Tanggal</th>
@@ -65,6 +67,24 @@
                             <option value="keluar">Keluar</option>
                         </select>
                     </div>
+                    <div class="mb-3 d-none" id="supplier">
+                        <label for="id_supplier" class="form-label">Supplier<sup class="text-danger fw-bold">*</sup></label>
+                        <select class="form-select" id="id_supplier" name="id_supplier">
+                            <option value="" selected disabled>Pilih Supplier</option>
+                            <?php foreach ($suppliers as $supplier) : ?>
+                                <option value="<?= $supplier['id']; ?>"><?= $supplier['nama_supplier']; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3 d-none" id="divisi">
+                        <label for="id_divisi" class="form-label">Divisi<sup class="text-danger fw-bold">*</sup></label>
+                        <select class="form-select" id="id_divisi" name="id_divisi">
+                            <option value="" selected disabled>Pilih Divisi</option>
+                            <?php foreach ($divisis as $divisi) : ?>
+                                <option value="<?= $divisi['id']; ?>"><?= $divisi['nama_divisi']; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div class="mb-3">
                         <label for="jumlah" class="form-label">Jumlah<sup class="text-danger fw-bold">*</sup></label>
                         <input type="text" class="form-control" id="jumlah" name="jumlah" placeholder="Masukkan jumlah" autofocus required />
@@ -94,6 +114,9 @@
 
     $(document).ready(function() {
         $('.btn-tambah').on('click', function() {
+            $('#stok').addClass('d-none');
+            $('#supplier').addClass('d-none');
+            $('#divisi').addClass('d-none');
             resetForm();
         });
 
@@ -119,6 +142,24 @@
             });
         });
 
+        $('#jenis').on('change', function() {
+            var jenis = $(this).val();
+
+            if (jenis === 'masuk') {
+                $('#supplier').removeClass('d-none');
+                $('#supplier').attr('required', true);
+                $('#divisi').addClass('d-none');
+                $('#divisi').attr('required', false);
+                $('#id_divisi').val('');
+            } else if (jenis === 'keluar') {
+                $('#divisi').removeClass('d-none');
+                $('#divisi').attr('required', true);
+                $('#supplier').addClass('d-none');
+                $('#supplier').attr('required', false);
+                $('#id_supplier').val('');
+            }
+        });
+
         submitData();
         showData();
     });
@@ -138,8 +179,10 @@
                     response.data.forEach((transaction) => {
                         tbody += `
                             <tr>
+                                <td>${transaction.invoice}</td>
                                 <td>${transaction.nama_barang}</td>
                                 <td><span class="badge bg-${transaction.jenis === 'masuk' ? 'success' : 'danger'}">${transaction.jenis === 'masuk' ? 'Masuk' : 'Keluar'}</span></td>
+                                <td>${transaction.jenis === 'masuk' ? transaction.nama_supplier : transaction.nama_divisi}</td>
                                 <td>${transaction.jumlah}</td>
                                 <td>${transaction.keterangan}</td>
                                 <td>${new Date(transaction.created_at).toLocaleString('id-ID')}</td>
@@ -148,7 +191,7 @@
                     });
 
                 } else {
-                    tbody = `<tr><td colspan="5" class="text-center">${response.message}</td></tr>`;
+                    tbody = `<tr><td colspan="7" class="text-center">${response.message}</td></tr>`;
                 }
 
                 $('#table_transaksi tbody').html(tbody);

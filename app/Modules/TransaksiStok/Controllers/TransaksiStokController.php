@@ -10,11 +10,15 @@ class TransaksiStokController extends BaseController
 {
     protected $transaksiStokModel;
     protected $inventoryModel;
+    protected $divisionModel;
+    protected $supplierModel;
 
     public function __construct()
     {
         $this->transaksiStokModel = new TransaksiStok();
         $this->inventoryModel = new Inventory();
+        $this->divisionModel = new \Modules\Division\Models\Division();
+        $this->supplierModel = new \Modules\Supplier\Models\Supplier();
     }
 
     public function index()
@@ -22,6 +26,8 @@ class TransaksiStokController extends BaseController
         $data = [
             'title' => 'Transaksi Stok',
             'barangs' => $this->inventoryModel->findAll(),
+            'suppliers' => $this->supplierModel->findAll(),
+            'divisis' => $this->divisionModel->findAll(),
         ];
 
         return view('Modules\TransaksiStok\Views\Transaction', $data);
@@ -29,7 +35,7 @@ class TransaksiStokController extends BaseController
 
     public function list_ajax()
     {
-        $transaksi = $this->transaksiStokModel->withBarang();
+        $transaksi = $this->transaksiStokModel->withRelations();
 
         if (empty($transaksi)) {
             return $this->response->setJSON(['status' => false, 'message' => 'Data transaksi stok tidak ditemukan']);
@@ -69,8 +75,21 @@ class TransaksiStokController extends BaseController
             }
         }
 
+        if ($data['jenis'] === 'masuk' && empty($data['id_supplier'])) {
+            return $this->response->setJSON(['status' => false, 'message' => 'Supplier harus diisi untuk transaksi masuk']);
+        }
+
+        if ($data['jenis'] === 'keluar' && empty($data['id_divisi'])) {
+            return $this->response->setJSON(['status' => false, 'message' => 'Divisi harus diisi untuk transaksi keluar']);
+        }
+
+        $invoice = date('His') . strtoupper(substr(md5(uniqid(rand(), true)), 0, 6));
+
         $transaksi = [
             'id_barang'  => $data['id_barang'],
+            'id_supplier'  => $data['id_supplier'] ?? null,
+            'id_divisi'  => $data['id_divisi'] ?? null,
+            'invoice'  => $invoice,
             'jenis'       => $data['jenis'],
             'jumlah'     => $data['jumlah'],
             'keterangan' => $data['keterangan'],
