@@ -33,6 +33,13 @@ class TransaksiStokController extends BaseController
         return view('Modules\TransaksiStok\Views\Transaction', $data);
     }
 
+    public function count_ajax()
+    {
+        $total_transaksi = $this->transaksiStokModel->countAllResults();
+
+        return $this->response->setJSON(['status' => true, 'total_transactions' => $total_transaksi]);
+    }
+
     public function list_ajax()
     {
         $transaksi = $this->transaksiStokModel->withRelations();

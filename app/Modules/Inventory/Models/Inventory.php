@@ -19,4 +19,9 @@ class Inventory extends Model
 
         return $builder->get()->getResultArray();
     }
+
+    public function countItems()
+    {
+        return $this->countAllResults();
+    }
 }

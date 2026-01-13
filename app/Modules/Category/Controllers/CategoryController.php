@@ -22,6 +22,12 @@ class CategoryController extends BaseController
         return view('Modules\Category\Views\Category', $data);
     }
 
+    public function count_categories()
+    {
+        $totalCategories = $this->categoryModel->countCategories();
+        return $this->response->setJSON(['status' => true, 'total_categories' => $totalCategories]);
+    }
+
     public function list_ajax()
     {
         $category = $this->categoryModel->findAll();

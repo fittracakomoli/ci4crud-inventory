@@ -22,6 +22,13 @@ class DivisionController extends BaseController
         return view('Modules\Division\Views\Division', $data);
     }
 
+    public function count_ajax()
+    {
+        $totalDivisions = $this->divisionModel->countDivisions();
+
+        return $this->response->setJSON(['status' => true, 'total_divisions' => $totalDivisions]);
+    }
+
     public function list_ajax()
     {
         $divisions = $this->divisionModel->findAll();

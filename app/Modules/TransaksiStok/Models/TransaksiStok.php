@@ -12,6 +12,11 @@ class TransaksiStok extends Model
 
     protected $useTimestamps = true;
 
+    public function countTransaksi()
+    {
+        return $this->countAllResults();
+    }
+
     public function withRelations()
     {
         $builder = $this->db->table($this->table);

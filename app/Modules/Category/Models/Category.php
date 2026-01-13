@@ -11,4 +11,9 @@ class Category extends Model
     protected $allowedFields = ['nama', 'keterangan'];
 
     protected $useTimestamps = true;
+
+    public function countCategories()
+    {
+        return $this->countAllResults();
+    }
 }

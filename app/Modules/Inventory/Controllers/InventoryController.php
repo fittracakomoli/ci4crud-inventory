@@ -23,6 +23,12 @@ class InventoryController extends BaseController
         return view('Modules\Inventory\Views\Inventory', $data);
     }
 
+    public function count_items()
+    {
+        $totalItems = $this->inventoryModel->countItems();
+        return $this->response->setJSON(['status' => true, 'total_items' => $totalItems]);
+    }
+
     public function list_ajax()
     {
         $barang = $this->inventoryModel->withCategory();

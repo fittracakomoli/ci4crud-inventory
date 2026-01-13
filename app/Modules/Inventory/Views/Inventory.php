@@ -2,51 +2,47 @@
 
 <?= $this->section('content') ?>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12 mt-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h3>Inventory Management</h3>
-                    <p>Manage your inventory items here.</p>
-                </div>
-                <div class="mb-4 text-end">
-                    <div class="btn-group me-2" role="group" aria-label="View Toggle">
-                        <button onclick="showData('list')" class="btn btn-outline-primary btn-list">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
-                                <path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z" />
-                            </svg>
-                        </button>
-                        <button onclick="showData('card')" class="btn btn-outline-primary btn-card">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
-                                <path d="M120-200v-240h320v240H120Zm400 0v-240h320v240H520Zm-320-80h160v-80H200v80Zm400 0h160v-80H600v80ZM120-520v-240h320v240H120Zm400 0v-240h320v240H520Zm-320-80h160v-80H200v80Zm80 280Zm400 0ZM280-640Z" />
-                            </svg>
-                        </button>
-                    </div>
-                    <button type="button" class="btn btn-primary btn-tambah" data-bs-toggle="modal" data-bs-target="#barangModal">
-                        Tambah Barang
-                    </button>
-                </div>
-            </div>
 
-            <table id="table_barang" class="table table-hover" style="display:none;">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Gambar</th>
-                        <th>Nama Barang</th>
-                        <th>Kategori</th>
-                        <th class="text-center">Stok</th>
-                        <th class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-
-            <div id="area_card" class="row" style="display:none;"></div>
+<div class="card-header bg-white py-8 px-4 border-bottom-0 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center gap-3">
+        <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+            <i class="bi bi-building-fill fs-4"></i>
+        </div>
+        <div>
+            <h3 class="mb-1 fw-bold text-dark">Manajemen Barang</h3>
+            <p class="mb-0 text-muted small">Manajemen barang untuk kebutuhan transaksi barang.</p>
         </div>
     </div>
+    <div>
+        <div class="btn-group me-2" role="group" aria-label="View Toggle">
+            <button onclick="showData('list')" class="btn btn-outline-primary btn-list">
+                <i class="bi bi-list-ol"></i>
+            </button>
+            <button onclick="showData('card')" class="btn btn-outline-primary btn-card">
+                <i class="bi bi-grid"></i>
+            </button>
+        </div>
+        <button class="btn btn-primary rounded-pill px-4 shadow-sm btn-tambah" data-bs-toggle="modal" data-bs-target="#barangModal">
+            <i class="bi bi-plus-lg me-2"></i>Tambah Barang
+        </button>
+    </div>
 </div>
+
+<table class="table table-hover align-middle mb-0" id="table_barang">
+    <thead class="table-light">
+        <tr>
+            <th class="ps-4 py-3 border-0 small fw-bold text-uppercase">Produk</th>
+            <th class="border-0 small fw-bold text-uppercase">Kategori</th>
+            <th class="border-0 small fw-bold text-uppercase">Stok</th>
+            <th class="border-0 small fw-bold text-uppercase">Harga Satuan</th>
+            <th class="text-center border-0 small fw-bold text-uppercase">Aksi</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<div id="area_card" class="row" style="display:none;"></div>
+
 
 <!-- Create Modal -->
 
@@ -213,32 +209,77 @@
                             $('.btn-card').removeClass('active');
                             content += `
                             <tr>
-                                <th scope="row">${index + 1}</th>
-                                <td><img src="uploads/${item.gambar}" alt="${item.nama_barang}" width="100" class="img-thumbnail" /></td>
-                                <td>${item.nama_barang}</td>
-                                <td>${item.kategori}</td>
-                                <td class="text-center">${item.stok}</td>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="position-relative me-3">
+                                            <img src="uploads/${item.gambar}" alt="${item.nama_barang}" class="rounded-3 border shadow-sm" width="60" height="60" style="object-fit: cover;">
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark">${item.nama_barang}</h6>
+                                            <small class="text-muted">${item.deskripsi}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10 rounded-pill px-3">
+                                        ${item.kategori}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span class="fw-bold text-success me-2">${item.stok}</span>
+                                        <small class="text-muted">Unit</small>
+                                    </div>
+                                    <div class="progress" style="height: 4px; width: 80px;">
+                                        <div class="progress-bar bg-success" role="progressbar" aria-valuenow="${item.stok}" aria-valuemin="0" aria-valuemax="100" style="width: ${item.stok}%"></div>
+                                    </div>
+                                </td>
+                                <td class="fw-semibold text-dark">Rp. ${formatRupiah(item.harga)}</td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-info btn-detail" data-id="${item.id}">Detail</button>
-                                    <button class="btn btn-sm btn-warning btn-edit" data-id="${item.id}">Edit</button>
-                                    <button class="btn btn-sm btn-danger btn-delete" data-id="${item.id}">Hapus</button>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-light btn-detail text-info rounded-start-pill ps-3" title="Detail" data-id="${item.id}">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-light btn-edit text-primary" title="Edit" data-id="${item.id}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-light btn-delete text-danger rounded-end-pill pe-3" title="Hapus" data-id="${item.id}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>`;
                         } else {
                             $('.btn-card').addClass('active');
                             $('.btn-list').removeClass('active');
                             content += `
-                            <div class="col-md-3 mb-4">
-                                <div class="card h-100">
-                                    <img src="uploads/${item.gambar}" class="card-img-top" alt="${item.nama_barang}" style="height: 200px; object-fit: cover;">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${item.nama_barang}</h5>
-                                        <p class="card-text text-muted">${item.kategori} | Stok: ${item.stok}</p>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card product-card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                                    <img src="uploads/${item.gambar}" alt="${item.nama_barang}" class="card-img" style="height: 200px; object-fit: cover;">
+                                    <div class="card-img-overlay">
+                                        <span class="badge bg-primary bg-opacity-75 text-white rounded-pill stock-badge px-3 py-2 shadow-sm">
+                                            Stok: ${item.stok}
+                                        </span>
                                     </div>
-                                    <div class="card-footer bg-transparent border-top-0 text-center">
-                                        <button class="btn btn-sm btn-info btn-detail" data-id="${item.id}">Detail</button>
-                                        <button class="btn btn-sm btn-warning btn-edit" data-id="${item.id}">Edit</button>
-                                        <button class="btn btn-sm btn-danger btn-delete" data-id="${item.id}">Hapus</button>
+                                    <div class="card-body d-flex flex-column pt-4">
+                                        <small class="text-muted mb-1">${item.kategori}</small>
+                                        <h5 class="card-title fw-bold text-dark">${item.nama_barang}</h5>
+                                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                                            <h6 class="fw-bold text-primary mb-0">Rp ${formatRupiah(item.harga)}</h6>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between py-3">
+                                        <button class="btn btn-outline-primary rounded-pill w-100 me-2 btn-detail" data-id="${item.id}">
+                                            Detail
+                                        </button>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-light border rounded-circle me-1 text-secondary btn-edit" data-bs-toggle="tooltip" title="Edit" data-id="${item.id}">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-light border rounded-circle text-danger btn-delete" data-bs-toggle="tooltip" title="Hapus" data-id="${item.id}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>`;
@@ -321,6 +362,22 @@
                 });
             }
         })
+    }
+
+    function formatRupiah(angka) {
+        var number_string = angka.replace(/[^,\d]/g, '').toString(),
+            split = number_string.split(','),
+            sisa = split[0].length % 3,
+            rupiah = split[0].substr(0, sisa),
+            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+        if (ribuan) {
+            separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+
+        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+        return rupiah;
     }
 </script>
 

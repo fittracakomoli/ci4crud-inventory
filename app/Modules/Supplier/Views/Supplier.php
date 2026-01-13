@@ -2,35 +2,35 @@
 
 <?= $this->section('content') ?>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12 mt-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h3>Supplier Management</h3>
-                    <p>Manage your suppliers for your transaction.</p>
-                </div>
-                <div class="mb-4 text-end">
-                    <button type="button" class="btn btn-primary btn-tambah" data-bs-toggle="modal" data-bs-target="#supplierModal">
-                        Tambah Supplier
-                </div>
-            </div>
 
-            <table class="table table-hover" id="table_supplier">
-                <thead>
-                    <tr>
-                        <th scope="col">No.</th>
-                        <th scope="col">Nama Supplier</th>
-                        <th scope="col">Kontak</th>
-                        <th scope="col">Alamat</th>
-                        <th scope="col" class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+<div class="card-header bg-white py-4 px-4 border-bottom-0 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center gap-3">
+        <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+            <i class="bi bi-building-fill fs-4"></i>
+        </div>
+        <div>
+            <h5 class="mb-1 fw-bold text-dark">Manajemen Supplier</h5>
+            <p class="mb-0 text-muted small">Manajemen supplier untuk stok sistem inventaris.</p>
         </div>
     </div>
+    <button class="btn btn-primary rounded-pill px-4 shadow-sm btn-tambah" data-bs-toggle="modal" data-bs-target="#supplierModal">
+        <i class="bi bi-plus-lg me-2"></i>Tambah Supplier
+    </button>
 </div>
+
+<table class="table table-hover align-middle mb-0" id="table_supplier">
+    <thead class="table-light">
+        <tr>
+            <th class="ps-4 text-uppercase small fw-bold border-0">No</th>
+            <th class="text-uppercase small fw-bold border-0">Nama Supplier</th>
+            <th class="text-uppercase small fw-bold border-0">Kontak</th>
+            <th class="text-uppercase small fw-bold border-0">Alamat</th>
+            <th class="text-center text-uppercase small fw-bold border-0">Aksi</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
 
 <!-- Create Modal -->
 
@@ -124,13 +124,41 @@
                     $.each(response.data, function(index, supplier) {
                         tbody += `
                             <tr>
-                                <th scope="row">${index + 1}</th>
-                                <td>${supplier.nama_supplier}</td>
-                                <td>${supplier.kontak}</td>
-                                <td>${supplier.alamat}</td>
+                                <td class="ps-4 fw-bold text-muted">${index + 1}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-initial rounded-circle bg-warning bg-opacity-10 text-warning fw-bold d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
+                                            ${supplier.nama_supplier.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark">${supplier.nama_supplier}</h6>
+                                            <small class="text-muted">ID: SUP-${supplier.id}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center text-muted">
+                                        <div class="bg-light rounded-circle p-2 me-2">
+                                            <i class="bi bi-envelope text-primary"></i>
+                                        </div>
+                                        <span class="text-dark">${supplier.kontak}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="bi bi-geo-alt-fill me-2 text-danger"></i>
+                                        <span>${supplier.alamat}</span>
+                                    </div>
+                                </td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-primary btn-edit" data-id="${supplier.id}">Edit</button>
-                                    <button class="btn btn-sm btn-danger btn-delete" data-id="${supplier.id}">Delete</button>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-light text-primary border-0 btn-edit" data-id="${supplier.id}" data-bs-toggle="tooltip" title="Edit">
+                                            <i class="bi bi-pencil-square fs-6"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-light text-danger border-0 btn-delete" data-id="${supplier.id}" data-bs-toggle="tooltip" title="Hapus">
+                                            <i class="bi bi-trash fs-6"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         `;

@@ -2,35 +2,32 @@
 
 <?= $this->section('content') ?>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12 mt-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h3>Category Management</h3>
-                    <p>Manage your categories for your inventory system.</p>
-                </div>
-                <div class="mb-4 text-end">
-                    <button type="button" class="btn btn-primary btn-tambah" data-bs-toggle="modal" data-bs-target="#kategoriModal">
-                        Tambah Kategori
-                    </button>
-                </div>
-            </div>
-
-            <table class="table table-hover" id="table_kategori">
-                <thead>
-                    <tr>
-                        <th scope="col">No.</th>
-                        <th scope="col">Nama Kategori</th>
-                        <th scope="col">Keterangan</th>
-                        <th scope="col" class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+<div class="card-header bg-white py-4 px-4 border-bottom-0 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center gap-3">
+        <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+            <i class="bi bi-building-fill fs-4"></i>
+        </div>
+        <div>
+            <h3 class="mb-1 fw-bold text-dark">Manajemen Kategori</h3>
+            <p class="mb-0 text-muted small">Kelola kategori produk dan informasi terkait.</p>
         </div>
     </div>
+    <button class="btn btn-primary rounded-pill px-4 shadow-sm btn-tambah" data-bs-toggle="modal" data-bs-target="#kategoriModal">
+        <i class="bi bi-plus-lg me-2"></i>Tambah Kategori
+    </button>
 </div>
+
+<table class="table table-striped py-4" id="table_kategori">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th>Nama Kategori</th>
+            <th>Keterangan</th>
+            <th class="text-center" style="width: 20%;">Aksi</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
 <!-- Create Modal -->
 
@@ -78,6 +75,49 @@
             resetForm();
         });
 
+        $('#table_kategori').DataTable({
+            "ajax": {
+                "url": baseUrl + '/list',
+                "type": "GET"
+            },
+            "columns": [{
+                    "data": null,
+                    "render": function(data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                {
+                    "data": "nama"
+                },
+                {
+                    "data": "keterangan"
+                },
+                {
+                    "data": null,
+                    "render": function(data, type, row) {
+                        return `
+                            <div class="text-center">
+                                <button class="btn btn-sm btn-outline-primary me-1 rounded-pill btn-edit" data-id="${row.id}">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill btn-delete" data-id="${row.id}">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            ],
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: false,
+            "lengthMenu": [
+                [5, 10, 25, 50, -1],
+                [5, 10, 25, 50, "All"]
+            ],
+        });
+
         $(document).on('click', '.btn-edit', function() {
             let id = $(this).data('id');
 
@@ -101,42 +141,10 @@
 
         submitData();
         deleteData();
-        showData();
     });
 
     function resetForm() {
         $('#formKategori')[0].reset();
-    }
-
-    function showData() {
-        $.ajax({
-            url: baseUrl + '/list',
-            method: "GET",
-            dataType: "json",
-            success: function(response) {
-                if (response.status) {
-                    var tbody = '';
-                    response.data.forEach((category, index) => {
-                        tbody += `
-                            <tr>
-                                <th scope="row">${index + 1}</th>
-                                <td>${category.nama}</td>
-                                <td>${category.keterangan}</td>
-                                <td class="text-center">
-                                    <button class="btn btn-sm btn-primary btn-edit" data-id="${category.id}">Edit</button>
-                                    <button class="btn btn-sm btn-danger btn-delete" data-id="${category.id}">Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-
-                } else {
-                    tbody = `<tr><td colspan="5" class="text-center">${response.message}</td></tr>`;
-                }
-
-                $('#table_kategori tbody').html(tbody);
-            },
-        });
     }
 
     function submitData() {

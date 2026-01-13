@@ -2,34 +2,34 @@
 
 <?= $this->section('content') ?>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12 mt-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h3>Division Management</h3>
-                    <p>Manage your divisions for your transaction.</p>
-                </div>
-                <div class="mb-4 text-end">
-                    <button type="button" class="btn btn-primary btn-tambah" data-bs-toggle="modal" data-bs-target="#divisiModal">
-                        Tambah Divisi
-                </div>
-            </div>
 
-            <table class="table table-hover" id="table_divisi">
-                <thead>
-                    <tr>
-                        <th scope="col">No.</th>
-                        <th scope="col">Nama Divisi</th>
-                        <th scope="col">Penanggung Jawab</th>
-                        <th scope="col" class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+<div class="card-header bg-white py-4 px-4 border-bottom-0 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center gap-3">
+        <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+            <i class="bi bi-building-fill fs-4"></i>
+        </div>
+        <div>
+            <h5 class="mb-1 fw-bold text-dark">Manajemen Divisi</h5>
+            <p class="mb-0 text-muted small">Manajemen divisi untuk kebutuhan transaksi barang.</p>
         </div>
     </div>
+    <button class="btn btn-primary rounded-pill px-4 shadow-sm btn-tambah" data-bs-toggle="modal" data-bs-target="#divisiModal">
+        <i class="bi bi-plus-lg me-2"></i>Tambah Divisi
+    </button>
 </div>
+
+<table class="table table-hover align-middle mb-0" id="table_divisi">
+    <thead class="table-light">
+        <tr>
+            <th class="ps-4 text-uppercase small fw-bold border-0">No</th>
+            <th class="text-uppercase small fw-bold border-0">Nama Divisi</th>
+            <th class="text-uppercase small fw-bold border-0">Penanggung Jawab (PIC)</th>
+            <th class="text-center text-uppercase small fw-bold border-0">Aksi</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
 
 <!-- Create Modal -->
 
@@ -118,12 +118,33 @@
                     $.each(response.data, function(index, division) {
                         tbody += `
                             <tr>
-                                <th scope="row">${index + 1}</th>
-                                <td>${division.nama_divisi}</td>
-                                <td>${division.pj}</td>
+                                <td class="ps-4 fw-bold text-muted">${index + 1}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark">${division.nama_divisi}</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center p-2 rounded-3 border border-light bg-light bg-opacity-50" style="max-width: 250px;">
+                                        <div class="avatar-circle bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center me-3 text-primary fw-bold border" style="width: 40px; height: 40px;">
+                                            ${division.pj.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div class="lh-1">
+                                            <h6 class="mb-1 text-dark fs-6">${division.pj}</h6>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-primary btn-edit" data-id="${division.id}">Edit</button>
-                                    <button class="btn btn-sm btn-danger btn-delete" data-id="${division.id}">Delete</button>
+                                    <div class="btn-group rounded-pill" role="group">
+                                        <button type="button" class="btn btn-sm btn-light text-primary border-0 btn-edit" data-id="${division.id}" data-bs-toggle="tooltip" title="Edit">
+                                            <i class="bi bi-pencil-square fs-6"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-light text-danger border-0 btn-delete" data-id="${division.id}" data-bs-toggle="tooltip" title="Hapus">
+                                            <i class="bi bi-trash fs-6"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         `;

@@ -11,4 +11,9 @@ class Division extends Model
     protected $allowedFields = ['nama_divisi', 'pj'];
 
     protected $useTimestamps = true;
+
+    public function countDivisions()
+    {
+        return $this->countAllResults();
+    }
 }

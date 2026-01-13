@@ -10,4 +10,9 @@ class Supplier extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = ['nama_supplier', 'kontak', 'alamat'];
     protected $useTimestamps = true;
+
+    public function countSuppliers()
+    {
+        return $this->countAllResults();
+    }
 }

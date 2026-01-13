@@ -22,6 +22,13 @@ class SupplierController extends BaseController
         return view('Modules\Supplier\Views\Supplier', $data);
     }
 
+    public function count_ajax()
+    {
+        $totalSuppliers = $this->supplierModel->countSuppliers();
+
+        return $this->response->setJSON(['status' => true, 'total_suppliers' => $totalSuppliers]);
+    }
+
     public function list_ajax()
     {
         $suppliers = $this->supplierModel->findAll();
