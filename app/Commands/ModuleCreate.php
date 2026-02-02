@@ -97,7 +97,7 @@ class ModuleCreate extends BaseCommand
         $this->module_folder   = ucfirst($module_folder ?? 'Modules');
 
         $view_folder         = $params['-v'] ?? CLI::getOption('v');
-        $this->view_folder   = $view_folder ?? 'Views';
+        $this->view_folder   = $view_folder ?? 'Modules';
 
         mkdir(APPPATH .  $this->module_folder . '/' . $this->module_name);
 

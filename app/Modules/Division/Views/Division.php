@@ -13,58 +13,57 @@
             <p class="mb-0 text-muted small">Manajemen divisi untuk kebutuhan transaksi barang.</p>
         </div>
     </div>
-    <button class="btn btn-primary rounded-pill px-4 shadow-sm btn-tambah" data-bs-toggle="modal" data-bs-target="#divisiModal">
-        <i class="bi bi-plus-lg me-2"></i>Tambah Divisi
-    </button>
 </div>
 
-<table class="table table-hover align-middle mb-0" id="table_divisi">
-    <thead class="table-light">
-        <tr>
-            <th class="ps-4 text-uppercase small fw-bold border-0">No</th>
-            <th class="text-uppercase small fw-bold border-0">Nama Divisi</th>
-            <th class="text-uppercase small fw-bold border-0">Penanggung Jawab (PIC)</th>
-            <th class="text-center text-uppercase small fw-bold border-0">Aksi</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+<ul id="tab" class="nav nav-tabs nav-justified" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#tab-data" role="tab" aria-selected="false">
+            <span class="d-block d-sm-none"><i class="fas fa-table"></i></span>
+            <span class="d-none d-sm-block">Data</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#tab-form" role="tab" aria-selected="true">
+            <span class="d-block d-sm-none"><i class="fab fa-wpforms"></i></span>
+            <span class="d-none d-sm-block">Update</span>
+        </a>
+    </li>
+</ul>
 
+<div class="my-3">
+    <input type="text" id="search-input" placeholder="Cari divisi ..." class="form-control">
+</div>
 
-<!-- Create Modal -->
-
-<form id="formDivisi">
-    <div class="modal fade" id="divisiModal" tabindex="-1" aria-labelledby="divisiModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="divisiModalLabel">Form Tambah Divisi</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="id" name="id" value="" />
-                    <div class="mb-3">
-                        <label for="nama_divisi" class="form-label">Nama Divisi<sup class="text-danger fw-bold">*</sup></label>
-                        <input type="text" class="form-control" id="nama_divisi" name="nama_divisi" placeholder="Masukkan nama divisi" autofocus required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="pj" class="form-label">Penanggung Jawab</label>
-                        <input type="text" class="form-control" id="pj" name="pj" placeholder="Masukkan nama penanggung jawab" autofocus required />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </div>
-        </div>
+<div class="tab-content p-3 text-muted">
+    <div class="tab-pane active" id="tab-data" role="tabpanel">
+        <table class="table table-hover nowrap w-100" id="table_divisi">
+            <thead>
+                <tr>
+                    <th class="text-uppercase small fw-bold border-0">Nama Divisi</th>
+                    <th class="text-uppercase small fw-bold border-0">Penanggung Jawab (PIC)</th>
+                    <th class="text-center text-uppercase small fw-bold border-0">Aksi</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
-</form>
-
-<!-- Create Modal -->
+    <div class="tab-pane" id="tab-form" role="tabpanel">
+        <form action="" id="formDivisi" enctype="multipart/form-data">
+            <input type="hidden" id="id" name="id" value="" />
+            <div class="mb-3">
+                <label for="nama_divisi" class="form-label">Nama Divisi<sup class="text-danger fw-bold">*</sup></label>
+                <input type="text" class="form-control" id="nama_divisi" name="nama_divisi" placeholder="Masukkan nama divisi" autofocus required />
+            </div>
+            <div class="mb-3">
+                <label for="pj" class="form-label">Penanggung Jawab<sup class="text-danger fw-bold">*</sup></label>
+                <input type="text" class="form-control" id="pj" name="pj" placeholder="Masukkan penanggung jawab" autofocus required />
+            </div>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </form>
+    </div>
+</div>
 
 <?= $this->endSection() ?>
-
 
 <?= $this->section('scripts') ?>
 
@@ -72,9 +71,10 @@
     var baseUrl = window.location.href;
 
     $(document).ready(function() {
-        $('.btn-tambah').on('click', function() {
+        $('#tab a').on('click', function(e) {
+            e.preventDefault();
+            $(this).tab('show');
             resetForm();
-            $('#divisiModalLabel').text('Form Tambah Divisi');
         });
 
         $(document).on('click', '.btn-edit', function() {
@@ -86,11 +86,10 @@
                 success: function(response) {
                     if (response.status) {
                         let division = response.data;
+                        $('#tab a[href="#tab-form"]').tab('show');
                         $('#id').val(division.id);
                         $('#nama_divisi').val(division.nama_divisi);
                         $('#pj').val(division.pj);
-                        $('#divisiModalLabel').text('Form Edit Divisi');
-                        $('#divisiModal').modal('show');
                     } else {
                         alert(response.message);
                     }
@@ -98,119 +97,204 @@
             });
         });
 
+        $('#table_divisi').DataTable({
+            "serverSide": true,
+            "processing": true,
+            "ajax": {
+                "url": baseUrl + '/list',
+                "type": "GET",
+                "data": function(d) {
+                    d.search.value = $('#search-input').val();
+                }
+            },
+            "columns": [{
+                    "data": "nama_divisi",
+                    "render": function(data, type, row) {
+                        return `
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-initial rounded-circle bg-warning bg-opacity-10 text-warning fw-bold d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
+                                    ${row.nama_divisi.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-dark">${row.nama_divisi}</h6>
+                                    <small class="text-muted">ID: DIV-${row.id}</small>
+                                </div>
+                            </div>
+                        `;
+                    }
+                },
+                {
+                    "data": "pj",
+                    "render": function(data, type, row) {
+                        return `
+                            <div class="d-flex align-items-center text-muted">
+                                <div class="bg-light rounded-circle p-2 me-2">
+                                    <i class="bi bi-envelope text-primary"></i>
+                                </div>
+                                <span class="text-dark">${row.pj}</span>
+                            </div>
+                        `;
+                    }
+                },
+                {
+                    "data": null,
+                    "render": function(data, type, row) {
+                        return `
+                            <div class="text-center">
+                                <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-id="${row.id}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${row.id}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            ],
+            "paging": true,
+            "responsive": true,
+            "lengthMenu": [ [10, 25, 50], [10, 25, 50] ],
+            "searching": false,
+        });
+
+        $('#search-input').on('keyup', function() {
+            $('#table_divisi').DataTable().ajax.reload();
+        });
+
         submitData();
         deleteData();
-        showData();
     });
 
     function resetForm() {
         $('#formDivisi')[0].reset();
     }
 
-    function showData() {
-        $.ajax({
-            url: baseUrl + '/list',
-            method: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                if (response.status) {
-                    var tbody = '';
-                    $.each(response.data, function(index, division) {
-                        tbody += `
-                            <tr>
-                                <td class="ps-4 fw-bold text-muted">${index + 1}</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div>
-                                            <h6 class="mb-0 fw-bold text-dark">${division.nama_divisi}</h6>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center p-2 rounded-3 border border-light bg-light bg-opacity-50" style="max-width: 250px;">
-                                        <div class="avatar-circle bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center me-3 text-primary fw-bold border" style="width: 40px; height: 40px;">
-                                            ${division.pj.charAt(0).toUpperCase()}
-                                        </div>
-                                        <div class="lh-1">
-                                            <h6 class="mb-1 text-dark fs-6">${division.pj}</h6>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <div class="btn-group rounded-pill" role="group">
-                                        <button type="button" class="btn btn-sm btn-light text-primary border-0 btn-edit" data-id="${division.id}" data-bs-toggle="tooltip" title="Edit">
-                                            <i class="bi bi-pencil-square fs-6"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-light text-danger border-0 btn-delete" data-id="${division.id}" data-bs-toggle="tooltip" title="Hapus">
-                                            <i class="bi bi-trash fs-6"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    tbody = `<tr><td colspan="5" class="text-center">${response.message}</td></tr>`;
-                }
-
-                $('#table_divisi tbody').html(tbody);
-            }
-        });
-    }
-
     function submitData() {
-        $('#formDivisi').on('submit', function(e) {
+        $('#formDivisi').off('submit').on('submit', function(e) {
             e.preventDefault();
 
+            let url;
             if ($('#id').val()) {
-                var url = baseUrl + '/update';
+                url = baseUrl + '/update';
             } else {
-                var url = baseUrl + '/create';
+                url = baseUrl + '/create';
             }
 
-            var formData = $(this).serialize();
+            let formData = new FormData(this);
+
+            Swal.fire({
+                title: 'Sedang Memproses',
+                text: 'Mohon tunggu sebentar...',
+                icon: 'info',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
             $.ajax({
                 url: url,
                 method: 'POST',
                 data: formData,
+                processData: false,
+                contentType: false,
                 dataType: 'json',
                 success: function(response) {
                     if (response.status) {
-                        $('#divisiModal').modal('hide');
-                        resetForm();
-                        showData();
-                        alert(response.message);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            confirmButtonText: 'Oke'
+                        }).then(() => {
+                            $('#tab a[href="#tab-data"]').tab('show');
+                            resetForm();
+                            $('#table_divisi').DataTable().ajax.reload();
+                        });
+
                     } else {
-                        alert(response.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message,
+                            confirmButtonText: 'Tutup'
+                        });
                     }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        text: 'Gagal menghubungi server. Silakan coba lagi.',
+                        confirmButtonText: 'Tutup'
+                    });
                 }
             });
         });
     }
 
     function deleteData() {
-        $(document).on('click', '.btn-delete', function() {
+        $(document).off('click', '.btn-delete').on('click', '.btn-delete', function() {
             let id = $(this).data('id');
-            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                $.ajax({
-                    url: baseUrl + '/delete',
-                    method: 'POST',
-                    data: {
-                        id: id
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status) {
-                            showData();
-                            alert(response.message);
-                        } else {
-                            alert(response.message);
+
+            Swal.fire({
+                title: "Apakah Anda yakin?",
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Sedang Menghapus...',
+                        text: 'Mohon tunggu',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
                         }
-                    }
-                });
-            }
-        })
+                    });
+
+                    $.ajax({
+                        url: baseUrl + '/delete',
+                        method: 'POST',
+                        data: {
+                            id: id
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status) {
+                                Swal.fire({
+                                    title: "Terhapus!",
+                                    text: response.message,
+                                    icon: "success"
+                                }).then(() => {
+                                    $('#table_divisi').DataTable().ajax.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Gagal!",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire({
+                                title: "Error!",
+                                text: "Gagal menghubungi server.",
+                                icon: "error"
+                            });
+                        }
+                    });
+                }
+            });
+        });
     }
 </script>
 

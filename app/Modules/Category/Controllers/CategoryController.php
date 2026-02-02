@@ -22,21 +22,35 @@ class CategoryController extends BaseController
         return view('Modules\Category\Views\Category', $data);
     }
 
-    public function count_categories()
-    {
-        $totalCategories = $this->categoryModel->countCategories();
-        return $this->response->setJSON(['status' => true, 'total_categories' => $totalCategories]);
-    }
-
     public function list_ajax()
     {
-        $category = $this->categoryModel->findAll();
+        $request = \Config\Services::request();
 
-        if (empty($category)) {
-            return $this->response->setJSON(['status' => false, 'message' => 'Tidak ada data kategori.', 'data' => []]);
-        }
+        $draw           = $request->getVar('draw');
+        $start          = $request->getVar('start');
+        $length         = $request->getVar('length');
+        $order          = $request->getVar('order');
+        $columns        = $request->getVar('columns');
+        $searchValue    = $request->getVar('search')['value'] ?? '';
 
-        return $this->response->setJSON(['status' => true, 'data' => $category]);
+        $columnIndex    = $order[0]['column']; 
+        $orderColumn    = $columns[$columnIndex]['data'];
+        $orderDir       = $order[0]['dir'];
+
+        $result = $this->categoryModel->GetDatatatbleData(
+            $start, 
+            $length, 
+            $searchValue, 
+            $orderColumn,
+            $orderDir
+        );
+
+        return $this->response->setJSON([
+            "draw"            => intval($draw),
+            "recordsTotal"    => intval($result['recordsTotal']),
+            "recordsFiltered" => intval($result['recordsFiltered']),
+            "data"            => $result['data']
+        ]);
     }
 
     public function create_ajax()

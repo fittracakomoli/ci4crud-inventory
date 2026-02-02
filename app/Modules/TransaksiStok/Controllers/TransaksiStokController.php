@@ -33,22 +33,35 @@ class TransaksiStokController extends BaseController
         return view('Modules\TransaksiStok\Views\Transaction', $data);
     }
 
-    public function count_ajax()
-    {
-        $total_transaksi = $this->transaksiStokModel->countAllResults();
-
-        return $this->response->setJSON(['status' => true, 'total_transactions' => $total_transaksi]);
-    }
-
     public function list_ajax()
     {
-        $transaksi = $this->transaksiStokModel->withRelations();
+        $request = \Config\Services::request();
 
-        if (empty($transaksi)) {
-            return $this->response->setJSON(['status' => false, 'message' => 'Data transaksi stok tidak ditemukan']);
-        }
+        $draw           = $request->getVar('draw');
+        $start          = $request->getVar('start');
+        $length         = $request->getVar('length');
+        $order          = $request->getVar('order');
+        $columns        = $request->getVar('columns');
+        $searchValue    = $request->getVar('search')['value'] ?? '';
 
-        return $this->response->setJSON(['status' => true, 'data' => $transaksi]);
+        $columnIndex    = $order[0]['column']; 
+        $orderColumn    = $columns[$columnIndex]['data'];
+        $orderDir       = $order[0]['dir'];
+
+        $result = $this->transaksiStokModel->GetDatatableData(
+            $start, 
+            $length, 
+            $searchValue, 
+            $orderDir,
+            $orderColumn
+        );
+
+        return $this->response->setJSON([
+            "draw"            => intval($draw),
+            "recordsTotal"    => intval($result['recordsTotal']),
+            "recordsFiltered" => intval($result['recordsFiltered']),
+            "data"            => $result['data']
+        ]);
     }
 
     public function detail_ajax()

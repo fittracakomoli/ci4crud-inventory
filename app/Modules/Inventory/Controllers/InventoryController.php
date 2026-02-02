@@ -23,20 +23,35 @@ class InventoryController extends BaseController
         return view('Modules\Inventory\Views\Inventory', $data);
     }
 
-    public function count_items()
-    {
-        $totalItems = $this->inventoryModel->countItems();
-        return $this->response->setJSON(['status' => true, 'total_items' => $totalItems]);
-    }
-
     public function list_ajax()
     {
-        $barang = $this->inventoryModel->withCategory();
-        if (empty($barang)) {
-            return $this->response->setJSON(['status' => false, 'message' => 'Tidak ada data barang.', 'data' => []]);
-        }
+        $request = \Config\Services::request();
 
-        return $this->response->setJSON(['status' => true, 'data' => $barang]);
+        $draw           = $request->getVar('draw');
+        $start          = $request->getVar('start');
+        $length         = $request->getVar('length');
+        $order          = $request->getVar('order');
+        $columns        = $request->getVar('columns');
+        $searchValue    = $request->getVar('search')['value'] ?? '';
+
+        $columnIndex    = $order[0]['column']; 
+        $orderColumn    = $columns[$columnIndex]['data'];
+        $orderDir       = $order[0]['dir'];
+
+        $result = $this->inventoryModel->getDatatableData(
+            $start, 
+            $length, 
+            $searchValue, 
+            $orderColumn,
+            $orderDir
+        );
+
+        return $this->response->setJSON([
+            "draw"            => intval($draw),
+            "recordsTotal"    => intval($result['recordsTotal']),
+            "recordsFiltered" => intval($result['recordsFiltered']),
+            "data"            => $result['data']
+        ]);
     }
 
     public function create_ajax()

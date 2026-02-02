@@ -12,54 +12,55 @@
             <p class="mb-0 text-muted small">Kelola kategori produk dan informasi terkait.</p>
         </div>
     </div>
-    <button class="btn btn-primary rounded-pill px-4 shadow-sm btn-tambah" data-bs-toggle="modal" data-bs-target="#kategoriModal">
-        <i class="bi bi-plus-lg me-2"></i>Tambah Kategori
-    </button>
 </div>
 
-<table class="table table-striped py-4" id="table_kategori">
-    <thead>
-        <tr>
-            <th style="width: 5%;">No</th>
-            <th>Nama Kategori</th>
-            <th>Keterangan</th>
-            <th class="text-center" style="width: 20%;">Aksi</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+<ul id="tab" class="nav nav-tabs nav-justified" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#tab-data" role="tab" aria-selected="false">
+            <span class="d-block d-sm-none"><i class="fas fa-table"></i></span>
+            <span class="d-none d-sm-block">Data</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#tab-form" role="tab" aria-selected="true">
+            <span class="d-block d-sm-none"><i class="fab fa-wpforms"></i></span>
+            <span class="d-none d-sm-block">Update</span>
+        </a>
+    </li>
+</ul>
 
-<!-- Create Modal -->
+<div class="my-3">
+    <input type="text" id="search-input" placeholder="Cari kategori ..." class="form-control">
+</div>
 
-<form id="formKategori">
-    <div class="modal fade" id="kategoriModal" tabindex="-1" aria-labelledby="kategoriModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="kategoriModalLabel">Form Tambah Kategori</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="id" id="id" value="" />
-                    <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Kategori<sup class="text-danger fw-bold">*</sup></label>
-                        <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan nama kategori" autofocus required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="keterangan" class="form-label">Keterangan</label>
-                        <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </div>
-        </div>
+<div class="tab-content p-3 text-muted">
+    <div class="tab-pane active" id="tab-data" role="tabpanel">
+        <table class="table table-hover nowrap w-100" id="table_kategori">
+            <thead>
+                <tr>
+                    <th>Nama Kategori</th>
+                    <th>Keterangan</th>
+                    <th class="text-center" style="width: 20%;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
-</form>
-
-<!-- Create Modal -->
+    <div class="tab-pane" id="tab-form" role="tabpanel">
+        <form action="" id="formKategori" enctype="multipart/form-data">
+            <input type="hidden" name="id" id="id" value="" />
+            <div class="mb-2">
+                <label for="nama" class="form-label">Nama Kategori<sup class="text-danger fw-bold">*</sup></label>
+                <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan nama kategori" autofocus required />
+            </div>
+            <div class="mb-2">
+                <label for="keterangan" class="form-label">Keterangan</label>
+                <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </form>
+    </div>
+</div>
 
 <?= $this->endSection() ?>
 
@@ -69,53 +70,10 @@
     var baseUrl = window.location.href;
 
     $(document).ready(function() {
-        $('.btn-tambah').click(function() {
-            $('#kategoriModalLabel').text('Form Tambah Kategori');
-            $('#id').val('');
+        $('#tab a').on('click', function(e) {
+            e.preventDefault();
+            $(this).tab('show');
             resetForm();
-        });
-
-        $('#table_kategori').DataTable({
-            "ajax": {
-                "url": baseUrl + '/list',
-                "type": "GET"
-            },
-            "columns": [{
-                    "data": null,
-                    "render": function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
-                {
-                    "data": "nama"
-                },
-                {
-                    "data": "keterangan"
-                },
-                {
-                    "data": null,
-                    "render": function(data, type, row) {
-                        return `
-                            <div class="text-center">
-                                <button class="btn btn-sm btn-outline-primary me-1 rounded-pill btn-edit" data-id="${row.id}">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger rounded-pill btn-delete" data-id="${row.id}">
-                                    <i class="bi bi-trash"></i> Delete
-                                </button>
-                            </div>
-                        `;
-                    }
-                }
-            ],
-            paging: true,
-            searching: true,
-            ordering: true,
-            info: false,
-            "lengthMenu": [
-                [5, 10, 25, 50, -1],
-                [5, 10, 25, 50, "All"]
-            ],
         });
 
         $(document).on('click', '.btn-edit', function() {
@@ -127,11 +85,10 @@
                 success: function(response) {
                     if (response.status) {
                         let category = response.data;
+                        $('#tab a[href="#tab-form"]').tab('show');
                         $('#id').val(category.id);
                         $('#nama').val(category.nama);
                         $('#keterangan').val(category.keterangan);
-                        $('#kategoriModalLabel').text('Form Edit Kategori');
-                        $('#kategoriModal').modal('show');
                     } else {
                         alert(response.message);
                     }
@@ -141,6 +98,49 @@
 
         submitData();
         deleteData();
+
+        $('#table_kategori').DataTable({
+            "serverSide": true,
+            "processing": true,
+            "ajax": {
+                "url": baseUrl + '/list',
+                "type": "GET",
+                "data": function(d) {
+                    d.search.value = $('#search-input').val();
+                }
+            },
+            "columns": [
+                {
+                    "data": "nama"
+                },
+                {
+                    "data": "keterangan"
+                },
+                {
+                    "data": null,
+                    "render": function(data, type, row) {
+                        return `
+                            <div class="text-center">
+                                <button class="btn btn-sm btn-outline-primary me-1 btn-edit" data-id="${row.id}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${row.id}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            ],
+            "paging": true,
+            "responsive": true,
+            "lengthMenu": [ [10, 25, 50], [10, 25, 50] ],
+            "searching": false,
+        });
+
+        $('#search-input').on('keyup', function() {
+            $('#table_kategori').DataTable().ajax.reload();
+        });
     });
 
     function resetForm() {
@@ -148,58 +148,130 @@
     }
 
     function submitData() {
-        $('#formKategori').submit(function(e) {
+        $('#formKategori').off('submit').on('submit', function(e) {
             e.preventDefault();
 
+            let url;
             if ($('#id').val()) {
-                var url = baseUrl + '/update';
+                url = baseUrl + '/update';
             } else {
-                var url = baseUrl + '/create';
+                url = baseUrl + '/create';
             }
 
-            let formData = $(this).serialize();
+            let formData = new FormData(this);
+
+            Swal.fire({
+                title: 'Sedang Memproses',
+                text: 'Mohon tunggu sebentar...',
+                icon: 'info',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
             $.ajax({
                 url: url,
                 method: 'POST',
                 data: formData,
+                processData: false,
+                contentType: false,
                 dataType: 'json',
                 success: function(response) {
                     if (response.status) {
-                        $('#kategoriModal').modal('hide');
-                        showData();
-                        resetForm();
-                        alert(response.message);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            confirmButtonText: 'Oke'
+                        }).then(() => {
+                            $('#tab a[href="#tab-data"]').tab('show');
+                            resetForm();
+                            $('#table_kategori').DataTable().ajax.reload();
+                        });
+
                     } else {
-                        alert(response.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message,
+                            confirmButtonText: 'Tutup'
+                        });
                     }
                 },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        text: 'Gagal menghubungi server. Silakan coba lagi.',
+                        confirmButtonText: 'Tutup'
+                    });
+                }
             });
         });
     }
 
     function deleteData() {
-        $(document).on('click', '.btn-delete', function() {
+        $(document).off('click', '.btn-delete').on('click', '.btn-delete', function() {
             let id = $(this).data('id');
-            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                $.ajax({
-                    url: baseUrl + '/delete',
-                    method: 'POST',
-                    data: {
-                        id: id
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status) {
-                            showData();
-                            alert(response.message);
-                        } else {
-                            alert(response.message);
+
+            Swal.fire({
+                title: "Apakah Anda yakin?",
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Sedang Menghapus...',
+                        text: 'Mohon tunggu',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
                         }
-                    }
-                });
-            }
-        })
+                    });
+
+                    $.ajax({
+                        url: baseUrl + '/delete',
+                        method: 'POST',
+                        data: {
+                            id: id
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status) {
+                                Swal.fire({
+                                    title: "Terhapus!",
+                                    text: response.message,
+                                    icon: "success"
+                                }).then(() => {
+                                    $('#table_kategori').DataTable().ajax.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Gagal!",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire({
+                                title: "Error!",
+                                text: "Gagal menghubungi server.",
+                                icon: "error"
+                            });
+                        }
+                    });
+                }
+            });
+        });
     }
 </script>
 

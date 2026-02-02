@@ -12,45 +12,49 @@ class TransaksiStok extends Model
 
     protected $useTimestamps = true;
 
-    public function countTransaksi()
+    public function GetDatatableData($start, $length, $search, $dir, $col)
     {
-        return $this->countAllResults();
-    }
+        $query = "SELECT t.*, b.nama_barang, s.nama_supplier, d.nama_divisi 
+                  FROM {$this->table} t
+                  LEFT JOIN barang b ON t.id_barang = b.id
+                  LEFT JOIN supplier s ON t.id_supplier = s.id
+                  LEFT JOIN divisi d ON t.id_divisi = d.id";
+        $countQuery = "SELECT COUNT(*) as total 
+                       FROM {$this->table} t
+                       LEFT JOIN barang b ON t.id_barang = b.id
+                       LEFT JOIN supplier s ON t.id_supplier = s.id
+                       LEFT JOIN divisi d ON t.id_divisi = d.id";
+        
+        $where = "";
+        if ($search) {
+            $where = " WHERE b.nama_barang LIKE '%$search%' 
+                       OR s.nama_supplier LIKE '%$search%' 
+                       OR d.nama_divisi LIKE '%$search%' 
+                       OR t.invoice LIKE '%$search%' 
+                       OR t.jenis LIKE '%$search%' 
+                       OR t.keterangan LIKE '%$search%'";
+        }
 
-    public function withRelations()
-    {
-        $builder = $this->db->table($this->table);
-        $builder->select('transaksi_stok.*, barang.nama_barang as nama_barang, barang.stok')->join('barang', 'barang.id = transaksi_stok.id_barang', 'left');
+        $orderBy = " ORDER BY $col $dir ";
+        $limit = " LIMIT $length OFFSET $start ";
 
-        $builder->select('transaksi_stok.*, supplier.nama_supplier as nama_supplier')->join('supplier', 'supplier.id = transaksi_stok.id_supplier', 'left');
+        $totalAll = $this->db->query($countQuery)->getRow()->total;
 
-        $builder->select('transaksi_stok.*, divisi.nama_divisi as nama_divisi')->join('divisi', 'divisi.id = transaksi_stok.id_divisi', 'left');
+        if ($search) {
+            $sqlFiltered = $countQuery . $where;
+            $totalFiltered = $this->db->query($sqlFiltered)->getRow()->total;
+        } else {
+            $totalFiltered = $totalAll;
+        }
 
-        return $builder->get()->getResultArray();
-    }
+        $sqlFinal = $query . $where . $orderBy . $limit;
+        $data = $this->db->query($sqlFinal)->getResultArray();
 
-    public function withBarang()
-    {
-        $builder = $this->db->table($this->table);
-        $builder->select('transaksi_stok.*, barang.nama_barang as nama_barang, barang.stok')->join('barang', 'barang.id = transaksi_stok.id_barang', 'left');
-
-        return $builder->get()->getResultArray();
-    }
-
-    public function withSupplier()
-    {
-        $builder = $this->db->table($this->table);
-        $builder->select('transaksi_stok.*, supplier.nama_supplier as nama_supplier')->join('supplier', 'supplier.id = transaksi_stok.id_supplier', 'left');
-
-        return $builder->get()->getResultArray();
-    }
-
-    public function withDivisi()
-    {
-        $builder = $this->db->table($this->table);
-        $builder->select('transaksi_stok.*, divisi.nama_divisi as nama_divisi')->join('divisi', 'divisi.id = transaksi_stok.id_divisi', 'left');
-
-        return $builder->get()->getResultArray();
+        return [
+            'recordsTotal'    => $totalAll,
+            'recordsFiltered' => $totalFiltered,
+            'data'            => $data
+        ];
     }
 
     public function simpanTransaksi($data)

@@ -22,22 +22,35 @@ class SupplierController extends BaseController
         return view('Modules\Supplier\Views\Supplier', $data);
     }
 
-    public function count_ajax()
-    {
-        $totalSuppliers = $this->supplierModel->countSuppliers();
-
-        return $this->response->setJSON(['status' => true, 'total_suppliers' => $totalSuppliers]);
-    }
-
     public function list_ajax()
     {
-        $suppliers = $this->supplierModel->findAll();
+        $request = \Config\Services::request();
 
-        if (empty($suppliers)) {
-            return $this->response->setJSON(['status' => false, 'message' => 'Tidak ada data supplier.', 'data' => []]);
-        }
+        $draw           = $request->getVar('draw');
+        $start          = $request->getVar('start');
+        $length         = $request->getVar('length');
+        $order          = $request->getVar('order');
+        $columns        = $request->getVar('columns');
+        $searchValue    = $request->getVar('search')['value'] ?? '';
 
-        return $this->response->setJSON(['status' => true, 'data' => $suppliers]);
+        $columnIndex    = $order[0]['column']; 
+        $orderColumn    = $columns[$columnIndex]['data'];
+        $orderDir       = $order[0]['dir'];
+
+        $result = $this->supplierModel->GetDatatableData(
+            $start, 
+            $length, 
+            $searchValue, 
+            $orderColumn,
+            $orderDir
+        );
+
+        return $this->response->setJSON([
+            "draw"            => intval($draw),
+            "recordsTotal"    => intval($result['recordsTotal']),
+            "recordsFiltered" => intval($result['recordsFiltered']),
+            "data"            => $result['data']
+        ]);
     }
 
     public function create_ajax()

@@ -12,16 +12,43 @@ class Inventory extends Model
 
     protected $useTimestamps = true;
 
-    public function withCategory()
+    public function getDatatableData($start, $length, $search, $col, $dir)
     {
-        $builder = $this->db->table($this->table);
-        $builder->select('barang.*, kategori.nama as kategori')->join('kategori', 'kategori.id = barang.id_kategori', 'left');
+        $query = "SELECT b.*, k.nama as kategori
+                  FROM {$this->table} b
+                  LEFT JOIN kategori k ON b.id_kategori = k.id ";
+        $countQuery = "SELECT COUNT(*) as total
+                       FROM {$this->table} b
+                       LEFT JOIN kategori k ON b.id_kategori = k.id ";
 
-        return $builder->get()->getResultArray();
-    }
+        $where = "";
+        if($search) {
+            $where = " WHERE b.nama_barang LIKE '%$search%' OR k.nama LIKE '%$search%'";
+        }
 
-    public function countItems()
-    {
-        return $this->countAllResults();
+        if(empty($col)) {
+            $col = 'b.id';
+        }
+
+        $orderBy = " ORDER BY $col $dir ";
+        $limit = " LIMIT $length OFFSET $start ";
+
+        $totalAll = $this->db->query($countQuery)->getRow()->total;
+
+        if($search) {
+            $sqlFiltered = $countQuery . $where;
+            $totalFiltered = $this->db->query($sqlFiltered)->getRow()->total;
+        } else {
+            $totalFiltered = $totalAll;
+        }
+
+        $sqlFinal = $query . $where . $orderBy . $limit;
+        $data = $this->db->query($sqlFinal)->getResultArray();
+
+        return [
+            'recordsTotal'    => $totalAll,
+            'recordsFiltered' => $totalFiltered,
+            'data'            => $data
+        ];
     }
 }
