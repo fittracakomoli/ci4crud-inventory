@@ -21,12 +21,14 @@
             <span class="d-none d-sm-block">Data</span>
         </a>
     </li>
+    <?php if (auth()->user()->can('manage.product')) : ?>
     <li class="nav-item">
         <a class="nav-link" data-bs-toggle="tab" href="#tab-form" role="tab" aria-selected="true">
             <span class="d-block d-sm-none"><i class="fab fa-wpforms"></i></span>
             <span class="d-none d-sm-block">Update</span>
         </a>
     </li>
+    <?php endif; ?>
 </ul>
 
 <div class="my-3">
@@ -42,7 +44,9 @@
                     <th class="border-0 small fw-bold text-uppercase">Kategori</th>
                     <th class="border-0 small fw-bold text-uppercase">Stok</th>
                     <th class="border-0 small fw-bold text-uppercase">Harga Satuan</th>
+                    <?php if (auth()->user()->can('manage.product')) : ?>
                     <th class="text-center border-0 small fw-bold text-uppercase">Aksi</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -267,7 +271,9 @@
                     "render": function(data, type, row) {
                         return `Rp. ${formatRupiah(row.harga)}`;
                     }
-                },
+                }
+                <?php if (auth()->user()->can('manage.product')) : ?>
+                ,
                 {
                     "data": null,
                     "render": function(data, type, row) {
@@ -286,10 +292,11 @@
                         `;
                     }
                 }
+                <?php endif; ?>
             ],
             "paging": true,
             "responsive": true,
-            "lengthMenu": [ [10, 25, 50], [10, 25, 50] ],
+            "lengthMenu": [ [5, 10, 50, 100], [5, 10, 50, 100] ],
             "searching": false,
         });
 

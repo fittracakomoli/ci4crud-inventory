@@ -21,12 +21,14 @@
             <span class="d-none d-sm-block">Data</span>
         </a>
     </li>
+    <?php if (auth()->user()->can('manage.supplier')) : ?>
     <li class="nav-item">
         <a class="nav-link" data-bs-toggle="tab" href="#tab-form" role="tab" aria-selected="true">
             <span class="d-block d-sm-none"><i class="fab fa-wpforms"></i></span>
             <span class="d-none d-sm-block">Update</span>
         </a>
     </li>
+    <?php endif; ?>
 </ul>
 
 <div class="mb-3">
@@ -41,7 +43,9 @@
                     <th class="text-uppercase small fw-bold border-0">Nama Supplier</th>
                     <th class="text-uppercase small fw-bold border-0">Kontak</th>
                     <th class="text-uppercase small fw-bold border-0">Alamat</th>
+                    <?php if (auth()->user()->can('manage.supplier')) : ?>
                     <th class="text-center text-uppercase small fw-bold border-0">Aksi</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -154,7 +158,9 @@
                             </div>
                         `;
                     }
-                },
+                }
+                <?php if (auth()->user()->can('manage.supplier')) : ?>
+                ,
                 {
                     "data": null,
                     "render": function(data, type, row) {
@@ -170,10 +176,11 @@
                         `;
                     }
                 }
+                <?php endif; ?>
             ],
             "paging": true,
             "responsive": true,
-            "lengthMenu": [ [10, 25, 50], [10, 25, 50] ],
+            "lengthMenu": [ [5, 10, 50, 100], [5, 10, 50, 100] ],
             "searching": false,
         });
 

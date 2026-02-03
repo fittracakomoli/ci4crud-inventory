@@ -1,9 +1,12 @@
 <?= $this->extend('layouts/template') ?>
 
 <?= $this->section('content') ?>
-<div class="card mb-4">
+<div class="card my-4">
     <div class="card-body">
-        <h2 class="mb-2">Selamat datang kembali, Admin!</h2>
+        <h2 class="mb-2">Selamat datang kembali,
+            <?php $user = auth()->user() ?>
+            <?= $user->username; ?>
+        </h2>
         <p>Manajemen barang dan gudang menggunakan CodeIgniter 4.</p>
     </div>
 </div>

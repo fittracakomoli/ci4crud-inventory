@@ -35,6 +35,15 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
         'auth'          => \App\Filters\AuthFilter::class,
+
+        'session' => \CodeIgniter\Shield\Filters\SessionAuth::class,
+        'tokens'  => \CodeIgniter\Shield\Filters\TokenAuth::class,
+        'chain'   => \CodeIgniter\Shield\Filters\ChainAuth::class, // <-- Paling sering dipakai
+        'auth-rates' => \CodeIgniter\Shield\Filters\AuthRates::class,
+        'group'   => \CodeIgniter\Shield\Filters\GroupFilter::class,
+        'permission' => \CodeIgniter\Shield\Filters\PermissionFilter::class,
+        'force-reset' => \CodeIgniter\Shield\Filters\ForcePasswordResetFilter::class,
+        'jwt'     => \CodeIgniter\Shield\Filters\JWTAuth::class,
     ];
 
     /**

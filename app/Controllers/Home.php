@@ -7,7 +7,7 @@ class Home extends BaseController
     public function index()
     {
         $data = [
-            'title' => 'Hello World in CodeIgniter 4'
+            'title' => 'Home Page',
         ];
 
         return view('home', $data);

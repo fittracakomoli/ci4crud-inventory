@@ -22,12 +22,14 @@
             <span class="d-none d-sm-block">Data</span>
         </a>
     </li>
+    <?php if (auth()->user()->can('manage.division')) : ?>
     <li class="nav-item">
         <a class="nav-link" data-bs-toggle="tab" href="#tab-form" role="tab" aria-selected="true">
             <span class="d-block d-sm-none"><i class="fab fa-wpforms"></i></span>
             <span class="d-none d-sm-block">Update</span>
         </a>
     </li>
+    <?php endif; ?>
 </ul>
 
 <div class="my-3">
@@ -41,7 +43,9 @@
                 <tr>
                     <th class="text-uppercase small fw-bold border-0">Nama Divisi</th>
                     <th class="text-uppercase small fw-bold border-0">Penanggung Jawab (PIC)</th>
+                    <?php if (auth()->user()->can('manage.division')) : ?>
                     <th class="text-center text-uppercase small fw-bold border-0">Aksi</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -135,7 +139,9 @@
                             </div>
                         `;
                     }
-                },
+                }
+                <?php if (auth()->user()->can('manage.division')) : ?>
+                ,
                 {
                     "data": null,
                     "render": function(data, type, row) {
@@ -150,11 +156,12 @@
                             </div>
                         `;
                     }
-                }
+                },
+                <?php endif; ?>
             ],
             "paging": true,
             "responsive": true,
-            "lengthMenu": [ [10, 25, 50], [10, 25, 50] ],
+            "lengthMenu": [ [5, 10, 50, 100], [5, 10, 50, 100] ],
             "searching": false,
         });
 

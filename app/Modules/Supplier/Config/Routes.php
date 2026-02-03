@@ -4,10 +4,13 @@ if (!isset($routes)) {
     $routes = \Config\Services::routes(true);
 }
 
-$routes->group('supplier', ['namespace' => 'Modules\Supplier\Controllers'], function ($subroutes) {
+$routes->group('supplier', ['namespace' => 'Modules\Supplier\Controllers', 'filter' => 'permission:view.supplier'], function ($subroutes) {
     $subroutes->add('/', 'SupplierController::index');
     $subroutes->add('list', 'SupplierController::list_ajax');
     $subroutes->add('count', 'SupplierController::count_ajax');
+});
+
+$routes->group('supplier', ['namespace' => 'Modules\Supplier\Controllers', 'filter' => 'permission:manage.supplier'], function ($subroutes) {
     $subroutes->add('create', 'SupplierController::create_ajax');
     $subroutes->add('delete', 'SupplierController::delete_ajax');
     $subroutes->add('detail', 'SupplierController::detail_ajax');

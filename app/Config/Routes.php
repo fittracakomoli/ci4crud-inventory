@@ -2,7 +2,9 @@
 
 $routes = \Config\Services::routes();
 
-$routes->get('/', 'Home::index');
+$routes->get('/', 'Home::index', ['filter' => 'permission:view.home']);
+
+service('auth')->routes($routes);
 
 /*
 * --------------------------------------------------------------------

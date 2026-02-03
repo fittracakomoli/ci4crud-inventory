@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class Tes extends Model
 {
-    protected $table = 'users';
+    protected $table = 'people';
     protected $primaryKey = 'id';
     protected $allowedFields = ['nama', 'email', 'role'];
 
